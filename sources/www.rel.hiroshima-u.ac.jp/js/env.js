@@ -1,6 +1,9 @@
 // JS Env
 
-var Environment = function(apparatus) {
+
+var NStateMax = 163000
+
+var Environment = function(cart) {
 	this.X_SCOPE0 = 1.0;
 	this.X_SCOPE1 = 2.0;
 	this.DX_SCOPE0 = 0.5;
@@ -12,72 +15,27 @@ var Environment = function(apparatus) {
 	this.reward1 = 0.0;
 	this.reward2 = -10.0;
 
-	this.apparatus = apparatus;
+	this.cart = cart;
 };
 
 Environment.prototype.getAction = function(i) {
 	if (i == 0) {
-		return ApparatusAction.LEFT; // left
+		return CartAction.LEFT; // left
 	} else if (i == 1) {
-		return ApparatusAction.RIGHT; // right
+		return CartAction.RIGHT; // right
 	} else {
-		return ApparatusAction.NONE; // none
+		return CartAction.NONE; // none
 	}
 };
 
-/*Environment.prototype.getNState = function() {
-	return 2*3*4*2+1;
-};*/
+//記録の最大値-1を返す
 Environment.prototype.getNState = function() {
-	return 163;
+	return NStateMax;
 };
+//選択しうる行動の数-1を返す
 Environment.prototype.getNAction = function() {
 	return 2;
 };
-
-/*Environment.prototype.getCurrentState = function() {
-	var s1 = 0;
-	var s2 = 0;
-	var s3 = 0;
-	var s4 = 0;
-
-	if (this.apparatus.isFailed()) {
-		return 2*3*4*2;
-	}
-
-	if (this.apparatus.getX() < 0) {
-		s1 = 0;
-	} else {
-		s1 = 1;
-	}
-
-//	if(this.apparatus.dx < -this.DX_SCOPE0) {
-	if(this.apparatus.dx < this.DX_SCOPE0){
-		s2 = 0;
-	} else if(this.apparatus.dx < this.DX_SCOPE1){
-		s2 = 1;
-	} else {
-		s2 = 2;
-	}
-
-	if(this.apparatus.theta < -this.THETA_SCOPE0){
-		s3 = 0;
-	} else if(this.apparatus.theta < 0.0){
-		s3 = 1;
-	} else if(this.apparatus.theta < this.THETA_SCOPE0){
-		s3 = 2;
-	} else {
-		s3 = 3;
-	}
-
-	if(this.apparatus.dtheta < 0){
-		s4 = 0;
-	} else {
-		s4 = 1;
-	}
-
-	return s1 + 2 * s2 + 2 * 3 * s3 + 2 * 3 * 4 * s4;
-};*/
 
 Environment.prototype.getCurrentState = function() {
 	var s1 = 0;
@@ -85,44 +43,43 @@ Environment.prototype.getCurrentState = function() {
 	var s3 = 0;
 	var s4 = 0;
 
-	if (this.apparatus.isFailed()) {
-		return 162;
+	if (this.cart.isFailed()) {
+		return NStateMax-1;
 	}
 
-	if (this.apparatus.getX() < -0.8) {
+	if (this.cart.getX() < -0.8) {
 		s1 = 0;
-	} else if (this.apparatus.getX() < 0.8){
+	} else if (this.cart.getX() < 0.8){
 		s1 = 1;
 	}else {
 		s1 = 2;
 	}
 
-	if(this.apparatus.dx < -this.DX_SCOPE0) {
-//	if(this.apparatus.dx < this.DX_SCOPE0){
+	if(this.cart.dx < -this.DX_SCOPE0) {
 		s2 = 0;
-	} else if(this.apparatus.dx < this.DX_SCOPE0){
+	} else if(this.cart.dx < this.DX_SCOPE0){
 		s2 = 1;
 	} else {
 		s2 = 2;
 	}
 
-	if(this.apparatus.theta < -this.THETA_SCOPE0){
+	if(this.cart.theta < -this.THETA_SCOPE0){
 		s3 = 0;
-	} else if(this.apparatus.theta < -this.THETA_SCOPE1){
+	} else if(this.cart.theta < -this.THETA_SCOPE1){
 		s3 = 1;
-	} else if(this.apparatus.theta < 0.00){
+	} else if(this.cart.theta < 0.00){
 		s3 = 2;
-	} else if(this.apparatus.theta < this.THETA_SCOPE0){
+	} else if(this.cart.theta < this.THETA_SCOPE0){
 		s3 = 3;
-	} else if(this.apparatus.theta < this.THETA_SCOPE1){
+	} else if(this.cart.theta < this.THETA_SCOPE1){
 		s3 = 4;
 	} else {
 		s3 = 5;
 	}
 
-	if(this.apparatus.dtheta < -this.DTHETA_SCOPE0){
+	if(this.cart.dtheta < -this.DTHETA_SCOPE0){
 		s4 = 0;
-	} else if(this.apparatus.dtheta < this.DTHETA_SCOPE0){
+	} else if(this.cart.dtheta < this.DTHETA_SCOPE0){
 		s4 = 1;
 	} else {
 		s4 = 2;
@@ -131,16 +88,8 @@ Environment.prototype.getCurrentState = function() {
 	return s1 * 3 * 6 * 3 + s2 * 6 * 3 + s3 * 3 + s4;
 };
 
-/*Environment.prototype.getReward = function(state) {
-	if (state == 2*3*4*2) {
-		return this.reward2;
-	} else {
-		return this.reward1;
-	}
-};*/
-
 Environment.prototype.getReward = function(state) {
-	if (state == 162) {
+	if (state == NStateMax-1) {
 		return this.reward2;
 	} else {
 		return this.reward1;

@@ -1,4 +1,6 @@
-var Agent = function(alpha, gamma, epsilon, env) {
+//Q学習用のエージェント
+
+var QLearningAgent = function(alpha, gamma, epsilon, env) {
 	this.alpha = alpha;
 	this.gamma = gamma;
 	this.epsilon = epsilon;
@@ -6,6 +8,8 @@ var Agent = function(alpha, gamma, epsilon, env) {
 	this.q = new Array();
 	this.buffer = new Array();
 	this.lastAction = 1;
+
+	//Q学習用の配列を初期化
 	for (var i=0; i<this.env.getNState(); i++) {
 		this.q[i] = new Array(this.env.getNAction());
 		this.buffer[i] = new Array(this.env.getNAction());
@@ -13,7 +17,8 @@ var Agent = function(alpha, gamma, epsilon, env) {
 	this.init();
 };
 
-Agent.prototype.init = function() {
+//Q学習用の配列を初期化
+QLearningAgent.prototype.init = function() {
 	for (var i = 0; i < this.q.length; i++) {
 		for (var j = 0; j < this.q[i].length; j++) {
 			this.q[i][j] = 0.0;
@@ -22,11 +27,11 @@ Agent.prototype.init = function() {
 	}
 };
 
-Agent.prototype.reset = function() {
+QLearningAgent.prototype.reset = function() {
 	this.init();
 };
 
-Agent.prototype.buffer = function() {
+QLearningAgent.prototype.buffer = function() {
 	for(var i = 0; i < this.q.length; i++){
 		for(var j = 0; j < this.q[i].length; j++){
 			this.buffer[i][j] = this.q[i][j];
@@ -34,7 +39,7 @@ Agent.prototype.buffer = function() {
 	}
 };
 
-Agent.prototype.selectBufferedAction = function() {
+QLearningAgent.prototype.selectBufferedAction = function() {
 	var s = this.env.getCurrentState();
 	var a = 0;
 
@@ -47,7 +52,7 @@ Agent.prototype.selectBufferedAction = function() {
 	return this.env.getAction(a);
 };
 
-Agent.prototype.setLastAction = function(a) {
+QLearningAgent.prototype.setLastAction = function(a) {
 	for (var i = 0; i < this.env.getNAction(); i++){
 		if (this.env.getAction(i) == a){
 			this.lastAction = i;
@@ -56,11 +61,11 @@ Agent.prototype.setLastAction = function(a) {
 	}
 };
 
-Agent.prototype.selectAction = function() {
+QLearningAgent.prototype.selectAction = function() {
 	return this.selectAction2();
 };
 
-Agent.prototype.selectAction1 = function() {
+QLearningAgent.prototype.selectAction1 = function() {
 	var s = this.env.getCurrentState();
 	var a = 0;
 	var tmp = 0.0;
@@ -81,7 +86,7 @@ Agent.prototype.selectAction1 = function() {
 	return this.env.getAction(a);
 };
 
-Agent.prototype.selectAction2 = function() {
+QLearningAgent.prototype.selectAction2 = function() {
 	var s = this.env.getCurrentState();
 	var a = 0;
 
@@ -96,16 +101,14 @@ Agent.prototype.selectAction2 = function() {
 		}
 	}
 
-	//console.log(s, a, this.q[s][a]);
 	return this.env.getAction(a);
 };
 
-Agent.prototype.update = function(s1, s2) {
-//	console.log('update', s1, this.lastAction, this.getTDError(this.env.getReward(s2), s1, s2));
+QLearningAgent.prototype.update = function(s1, s2) {
 	this.q[s1][this.lastAction] += this.alpha * this.getTDError(this.env.getReward(s2), s1, s2);
 };
 
-Agent.prototype.getTDError = function(r, s1, s2) {
+QLearningAgent.prototype.getTDError = function(r, s1, s2) {
 	var a1 = this.lastAction;
 	var a2 = 0;
 

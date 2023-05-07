@@ -13,6 +13,7 @@ var Apparatus = function(width, height, scale, color) {
 	this.init();
 };
 
+//initialize cart
 Apparatus.prototype.init = function() {
 	this.x0 = MainFrame.WIDTH / 2.0;
 	this.y0 = MainFrame.HEIGHT - this.height - 160;
@@ -21,9 +22,13 @@ Apparatus.prototype.init = function() {
 	this.margin = 4;
 
 	this.dx = 0.0;
-	this.theta = Math.random() * 0.02 - 0.01;
+
+    //最初にランダムに棒の角度を設定する
+	//this.theta = Math.random() * 0.02 - 0.01;
+    this.theta = 3.14151;
 	//this.theta = 1*Math.sqrt(-2* Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random())+0;
-	this.dtheta = 0.0;
+	
+    this.dtheta = 0.0;
 	this.failed = false;
 
 	this.M = 1.0; // [kg]
